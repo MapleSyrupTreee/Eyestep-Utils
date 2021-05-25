@@ -24,10 +24,26 @@ double AddressCount = 0;
 /*
 	This function prints addresses to the console with the callinv conv
 */
-void PrintAddress(string Name, uintptr_t Address)
+void PrintAddress(string Name, uintptr_t Address, int ExpectedArgs = NULL)
 {
 	AddressCount++;
-	cout << Name << ": " << "0x" << std::hex << aslr(Address) << " " << str_conv(routine_mgr::get_conv(Address, get_arg_count(Address))) << endl;
+	if (ExpectedArgs == NULL)
+	{
+		cout << Name << ": " << "0x" << std::hex << aslr(Address) << " " << str_conv(routine_mgr::get_conv(Address, get_arg_count(Address))) << endl;
+	}
+	else
+	{
+		// Check if the expected args doesnt equal the amount we found
+		// if so address confidence is low and its likely not our address or roblox added more args
+		if (ExpectedArgs != get_arg_count(Address))
+		{
+			cout << "Address " << Name << "has an unexpected amount of arguments, address confidence low" << endl;
+		}
+		else
+		{
+			cout << Name << ": " << "0x" << std::hex << aslr(Address) << " " << str_conv(routine_mgr::get_conv(Address, get_arg_count(Address))) << endl;
+		}
+	}
 }
 
 /*
